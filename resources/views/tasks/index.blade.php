@@ -19,10 +19,10 @@
                 @foreach ($tasks as $task)
                     <div class="col-md-6 mb-4">
                         <div
-                            class="card h-100 {{ $task->due_date->isPast() && !$task->response ? 'border-danger' : '' }}">
+                            class="card h-100 {{ $task->due_date->isPast() && !$task->status === 'completed' ? 'border-danger' : '' }}">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h5 class="card-title mb-0">{{ $task->title }}</h5>
-                                @if ($task->response)
+                                @if ($task->status === 'approved')
                                     <span class="badge bg-success">Submitted</span>
                                 @elseif($task->due_date->isPast())
                                     <span class="badge bg-danger">Overdue</span>
@@ -42,27 +42,32 @@
                                     </small>
                                 </div>
 
-                                @if ($task->response)
+                                @if ($task->status === 'approved')
+                                    @php
+                                        $t = $task->submissions->first();
+                                    @endphp
+
                                     <div class="alert alert-success mb-3">
                                         <strong>Your Response:</strong><br>
-                                        {{ Str::limit($task->response, 100) }}
-                                        @if ($task->feedback)
+                                        {{ Str::limit($t->response, 100) }}
+
+                                        @if ($t->feedback)
                                             <hr>
                                             <strong>Feedback:</strong><br>
-                                            {{ $task->feedback }}
+                                            {{ $t->feedback }}
                                         @endif
                                     </div>
+                                @else
+                                    <div class="d-grid gap-2">
+                                        <a href="{{ route('tasks.show', $task->id) }}" class="btn btn-primary">
+                                            @if ($task->response)
+                                                <i class="fas fa-eye"></i> View Details
+                                            @else
+                                                <i class="fas fa-paper-plane"></i> Submit Response
+                                            @endif
+                                        </a>
+                                    </div>
                                 @endif
-
-                                <div class="d-grid gap-2">
-                                    <a href="{{ route('tasks.show', $task->id) }}" class="btn btn-primary">
-                                        @if ($task->response)
-                                            <i class="fas fa-eye"></i> View Details
-                                        @else
-                                            <i class="fas fa-paper-plane"></i> Submit Response
-                                        @endif
-                                    </a>
-                                </div>
                             </div>
                             <div class="card-footer text-muted">
                                 <small>Assigned: {{ $task->created_at->format('M d, Y') }}</small>

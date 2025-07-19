@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Task;
 use App\Models\GradeLevel;
 use App\Models\Submission;
@@ -124,6 +125,16 @@ class AdminTaskController extends Controller
             'status' => $validated['status'],
             'feedback' => $validated['feedback'],
         ]);
+
+        $task = $SS->task; // 👈 Access as property, not method
+
+        if ($validated['status'] === 'accepted') {
+            $task->status = 'approved';
+        } else {
+            $task->status = 'pending';
+        }
+
+        $task->save(); // Now this works as expected
 
         return redirect()->back()->with('success', 'Submission status updated successfully');
     }
