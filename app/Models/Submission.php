@@ -12,6 +12,8 @@ class Submission extends Model
         'user_id',
         'submission_date',
         'file_path',
+        'status',
+        'feedback'
     ];
 
     /**

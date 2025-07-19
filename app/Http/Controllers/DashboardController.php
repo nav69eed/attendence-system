@@ -46,9 +46,7 @@ class DashboardController extends Controller
             ->get();
 
         // Get upcoming and recent tasks
-        $tasks = Task::whereHas('gradeLevel', function ($query) {
-                $query->where('id', Auth::user()->grade_level_id);
-            })
+        $tasks = Task::where('assigned_to',Auth::id())
             ->where(function ($query) {
                 $query->whereNull('due_date')
                     ->orWhere('due_date', '>=', now()->subDays(7));

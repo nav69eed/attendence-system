@@ -37,6 +37,10 @@ class AdminUserSeeder extends Seeder
             [
                 'name' => 'Mike Johnson',
                 'email' => 'mike@example.com',
+            ],
+            [
+                'name' => 'Naveed Akhtar',
+                'email' => 'naveedakhtarnaveed69@gmail.com',
             ]
         ];
 

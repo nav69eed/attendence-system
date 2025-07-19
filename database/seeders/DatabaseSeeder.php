@@ -15,7 +15,6 @@ class DatabaseSeeder extends Seeder
             RoleAndPermissionSeeder::class,
             AttendancePermissionSeeder::class,
             AdminUserSeeder::class,
-            GradeLevelSeeder::class,
         ]);
     }
 }

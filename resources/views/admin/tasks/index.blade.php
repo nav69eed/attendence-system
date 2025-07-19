@@ -18,31 +18,16 @@
         <div class="card mb-4">
             <div class="card-body">
                 <form action="{{ route('admin.tasks.index') }}" method="GET" class="row g-3">
-                    <div class="col-md-4">
-                        <label for="grade_level" class="form-label">Grade Level</label>
-                        <select name="grade_level" id="grade_level" class="form-select">
-                            <option value="">All Grades</option>
-                            @foreach ($gradeLevels as $level)
-                                <option value="{{ $level->id }}"
-                                    {{ request('grade_level') == $level->id ? 'selected' : '' }}>
-                                    {{ $level->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label for="status" class="form-label">Status</label>
                         <select name="status" id="status" class="form-select">
                             <option value="">All Status</option>
-                            <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending
-                            </option>
-                            <option value="submitted" {{ request('status') === 'submitted' ? 'selected' : '' }}>
-                                Submitted</option>
-                            <option value="overdue" {{ request('status') === 'overdue' ? 'selected' : '' }}>Overdue
-                            </option>
+                            <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="submitted" {{ request('status') === 'submitted' ? 'selected' : '' }}>Submitted</option>
+                            <option value="overdue" {{ request('status') === 'overdue' ? 'selected' : '' }}>Overdue</option>
                         </select>
                     </div>
-                    <div class="col-md-4 d-flex align-items-end">
+                    <div class="col-md-6 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary w-100">
                             <i class="fas fa-filter"></i> Apply Filters
                         </button>
@@ -61,9 +46,8 @@
                     <thead class="table-dark">
                         <tr>
                             <th>Title</th>
-                            <th>Grade Level</th>
+                            <th>Assigned To</th>
                             <th>Due Date</th>
-                            <th>Submissions</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -72,38 +56,28 @@
                         @foreach ($tasks as $task)
                             <tr>
                                 <td>{{ Str::limit($task->title, 50) }}</td>
-                                <td>{{ $task->gradeLevel->name }}</td>
+                                <td>{{ $task->assignedTo->name }}</td>
                                 <td>
                                     @if ($task->due_date)
-                                         {{ $task->due_date->format('M d, Y h:i A') }}
-                                         @if ($task->due_date && $task->due_date->isPast())
-                                              <br>
-                                              <small class="text-danger">Overdue</small>
-                                          @elseif ($task->due_date)
-                                              <br>
-                                              <small class="text-muted">{{ $task->due_date->diffForHumans() }}</small>
-                                          @endif
-                                     @else
-                                         N/A
-                                     @endif
-                                </td>
-                                <td>
-                                    {{ $task->submissions_count }} / {{ $task->total_students }}
-                                    <div class="progress" style="height: 5px;">
-                                         <div class="progress-bar" role="progressbar"
-                                             style="width: {{ $task->total_students > 0 ? ($task->submissions_count / $task->total_students) * 100 : 0 }}%">
-                                         </div>
-                                     </div>
-                                </td>
-                                <td>
-                                    @if ($task->due_date->isPast())
-                                        <span class="badge bg-danger">Overdue</span>
-                                    @elseif($task->submissions_count == $task->total_students)
-                                        <span class="badge bg-success">All Submitted</span>
-                                    @elseif($task->submissions_count > 0)
-                                        <span class="badge bg-warning">Partial</span>
+                                        {{ $task->due_date->format('M d, Y h:i A') }}
+                                        @if ($task->due_date->isPast())
+                                            <br>
+                                            <small class="text-danger">Overdue</small>
+                                        @else
+                                            <br>
+                                            <small class="text-muted">{{ $task->due_date->diffForHumans() }}</small>
+                                        @endif
                                     @else
-                                        <span class="badge bg-secondary">No Submissions</span>
+                                        N/A
+                                    @endif
+                                </td>
+                                <td>
+                                    @if ($task->due_date && $task->due_date->isPast())
+                                        <span class="badge bg-danger">Overdue</span>
+                                    @elseif($task->status === 'submitted')
+                                        <span class="badge bg-success">Submitted</span>
+                                    @else
+                                        <span class="badge bg-secondary">Pending</span>
                                     @endif
                                 </td>
                                 <td>
@@ -139,8 +113,7 @@
                                                     <div class="modal-body">
                                                         <p>Are you sure you want to delete this task? This action cannot
                                                             be undone.</p>
-                                                        <p class="mb-0"><strong>Task:</strong> {{ $task->title }}
-                                                        </p>
+                                                        <p class="mb-0"><strong>Task:</strong> {{ $task->title }}</p>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary"

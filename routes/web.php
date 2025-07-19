@@ -1,10 +1,12 @@
 <?php
 
-use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\LeaveController;
-use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\LeaveController;
+use App\Http\Controllers\AdminTaskController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\Admin\SubmissionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,33 +56,32 @@ Route::middleware('auth')->group(function () {
         ->name('admin.leaves.show')
         ->middleware('role:admin');
 
-    // Task Routes
-    Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
-    Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
-    Route::post('/tasks/{task}/submit', [TaskController::class, 'submit'])->name('tasks.submit');
+    // Student Task Routes
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
+        Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
+        Route::post('/tasks/{task}/submit', [TaskController::class, 'submit'])->name('tasks.submit');
+    });
 
     // Admin Task Routes
-    Route::get('/admin/tasks', [TaskController::class, 'adminIndex'])
-        ->name('admin.tasks.index')
-        ->middleware('role:admin');
-    Route::get('/admin/tasks/create', [TaskController::class, 'create'])
-        ->name('admin.tasks.create')
-        ->middleware('role:admin');
-    Route::post('/admin/tasks', [TaskController::class, 'store'])
-        ->name('admin.tasks.store')
-        ->middleware('role:admin');
-    Route::get('/admin/tasks/{task}', [TaskController::class, 'show'])
-        ->name('admin.tasks.show')
-        ->middleware('role:admin');
-    Route::get('/admin/tasks/{task}/edit', [TaskController::class, 'edit'])
-        ->name('admin.tasks.edit')
-        ->middleware('role:admin');
-    Route::delete('/admin/tasks/{task}', [TaskController::class, 'destroy'])
-        ->name('admin.tasks.destroy')
-        ->middleware('role:admin');
+    Route::middleware(['auth', 'role:admin'])->group(function () {
+        Route::get('/admin/tasks', [AdminTaskController::class, 'index'])->name('admin.tasks.index');
+        Route::get('/admin/tasks/create', [AdminTaskController::class, 'create'])->name('admin.tasks.create');
+        Route::post('/admin/tasks', [AdminTaskController::class, 'store'])->name('admin.tasks.store');
+        Route::get('/admin/tasks/{task}', [AdminTaskController::class, 'show'])->name('admin.tasks.show'); // Add this line
+        Route::get('/admin/tasks/{task}/edit', [AdminTaskController::class, 'edit'])->name('admin.tasks.edit');
+        Route::put('/admin/tasks/{task}', [AdminTaskController::class, 'update'])->name('admin.tasks.update');
+        Route::delete('/admin/tasks/{task}', [AdminTaskController::class, 'destroy'])->name('admin.tasks.destroy');
+        Route::patch('/admin/tasks/{task}/status', [AdminTaskController::class, 'updateSubmissionStatus'])
+            ->name('admin.tasks.update-status');
+    });
     Route::get('/admin/tasks/{task}/submissions', [TaskController::class, 'viewSubmissions'])
         ->name('admin.tasks.submissions')
         ->middleware('role:admin');
+    Route::middleware(['auth', 'role:admin'])->group(function () {
+        Route::patch('/tasks/{task}/update-status', [AdminTaskController::class, 'updateStatus'])
+            ->name('admin.tasks.update-status');
+    });
 });
 
 // ✅ Load auth routes properly here

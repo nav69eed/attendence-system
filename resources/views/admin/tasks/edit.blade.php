@@ -36,18 +36,18 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="grade_level_id" class="form-label">Grade Level</label>
-                            <select class="form-select @error('grade_level_id') is-invalid @enderror" 
-                                id="grade_level_id" name="grade_level_id" required>
-                                <option value="">Select Grade Level</option>
-                                @foreach($gradeLevels as $level)
-                                    <option value="{{ $level->id }}" 
-                                        {{ old('grade_level_id', $task->grade_level_id) == $level->id ? 'selected' : '' }}>
-                                        {{ $level->name }}
+                            <label for="assigned_to" class="form-label">Assign To Student</label>
+                            <select class="form-select @error('assigned_to') is-invalid @enderror" 
+                                id="assigned_to" name="assigned_to" required>
+                                <option value="">Select Student</option>
+                                @foreach($students as $student)
+                                    <option value="{{ $student->id }}" 
+                                        {{ old('assigned_to', $task->assigned_to) == $student->id ? 'selected' : '' }}>
+                                        {{ $student->name }}
                                     </option>
                                 @endforeach
                             </select>
-                            @error('grade_level_id')
+                            @error('assigned_to')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -62,17 +62,24 @@
                             @enderror
                         </div>
 
-                        @if($task->attachment_path)
+                        @if($task->attachments)
                             <div class="mb-3">
-                                <label class="form-label">Current Attachment</label>
-                                <div class="d-flex align-items-center gap-2">
-                                    <a href="{{ Storage::url($task->attachment_path) }}" target="_blank" class="btn btn-sm btn-info">
-                                        <i class="fas fa-file-download"></i> View Attachment
-                                    </a>
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" id="remove_attachment" name="remove_attachment">
-                                        <label class="form-check-label" for="remove_attachment">Remove current attachment</label>
-                                    </div>
+                                <label class="form-label">Current Attachments</label>
+                                <div class="d-flex flex-wrap gap-2 mb-2">
+                                    @foreach($task->attachments as $attachment)
+                                        <div class="d-flex align-items-center">
+                                            <a href="{{ Storage::url($attachment) }}" target="_blank" class="btn btn-sm btn-info">
+                                                <i class="fas fa-file-download"></i> View Attachment {{ $loop->iteration }}
+                                            </a>
+                                            <div class="form-check ms-2">
+                                                <input type="checkbox" class="form-check-input" 
+                                                    id="remove_attachment_{{ $loop->index }}" 
+                                                    name="remove_attachments[]" 
+                                                    value="{{ $attachment }}">
+                                                <label class="form-check-label" for="remove_attachment_{{ $loop->index }}">Remove</label>
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
                         @endif
@@ -80,7 +87,7 @@
                         <div class="mb-3">
                             <label for="attachment" class="form-label">New Attachment (optional)</label>
                             <input type="file" class="form-control @error('attachment') is-invalid @enderror" 
-                                id="attachment" name="attachment">
+                                id="attachment" name="attachment[]" multiple>
                             @error('attachment')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

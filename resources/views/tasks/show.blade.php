@@ -52,17 +52,31 @@
                                 <p>{{ $task->response }}</p>
 
                                 @if ($task->feedback)
-                                    <div class="alert alert-info mt-3">
-                                        <h6 class="fw-bold">Teacher's Feedback</h6>
-                                        <p class="mb-0">{{ $task->feedback }}</p>
-                                    </div>
+                                    @if ($task->submissions->isNotEmpty())
+                                        <div class="alert alert-{{ $submission->status === Task::STATUS_ACCEPTED ? 'success' :
+                                            ($submission->status === Task::STATUS_REJECTED ? 'danger' : 'info') }} mt-3">
+                                            <h6 class="fw-bold">Submission Status</h6>
+                                            <p class="mb-2">
+                                                @if($submission->status === Task::STATUS_ACCEPTED)
+                                                    <i class="fas fa-check-circle"></i> Your submission has been accepted
+                                                @elseif($submission->status === Task::STATUS_REJECTED)
+                                                    <i class="fas fa-times-circle"></i> Your submission has been rejected
+                                                @else
+                                                    <i class="fas fa-clock"></i> Your submission is under review
+                                                @endif
+                                            </p>
+                                            @if($submission->feedback)
+                                                <h6 class="fw-bold mt-3">Teacher's Feedback</h6>
+                                                <p class="mb-0">{{ $submission->feedback }}</p>
+                                            @endif
+                                        </div>
+                                    @endif
                                 @endif
                             </div>
                         @else
                             <form action="{{ route('tasks.submit', $task->id) }}" method="POST"
                                 enctype="multipart/form-data">
                                 @csrf
-                                @method('PUT')
 
                                 <div class="mb-3">
                                     <label for="response" class="form-label">Your Response</label>

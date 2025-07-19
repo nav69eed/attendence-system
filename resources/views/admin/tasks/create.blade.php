@@ -36,18 +36,18 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="grade_level_id" class="form-label">Grade Level</label>
-                                <select class="form-select @error('grade_level_id') is-invalid @enderror"
-                                    id="grade_level_id" name="grade_level_id" required>
-                                    <option value="">Select Grade Level</option>
-                                    @foreach ($gradeLevels as $level)
-                                        <option value="{{ $level->id }}"
-                                            {{ old('grade_level_id') == $level->id ? 'selected' : '' }}>
-                                            {{ $level->grade }}
+                                <label for="assigned_to" class="form-label">Assign To Student</label>
+                                <select class="form-select @error('assigned_to') is-invalid @enderror"
+                                    id="assigned_to" name="assigned_to" required>
+                                    <option value="">Select Student</option>
+                                    @foreach ($students as $student)
+                                        <option value="{{ $student->id }}"
+                                            {{ old('assigned_to') == $student->id ? 'selected' : '' }}>
+                                            {{ $student->name }}
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('grade_level_id')
+                                @error('assigned_to')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>

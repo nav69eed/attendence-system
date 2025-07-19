@@ -11,8 +11,7 @@ return new class extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('assigned_by')->constrained('users');
-            $table->foreignId('assigned_to')->nullable()->constrained('users');
-            $table->foreignId('grade_level_id')->constrained('grade_levels');
+            $table->foreignId('assigned_to')->constrained('users'); // Remove nullable
             $table->string('title');
             $table->text('description');
             $table->date('due_date')->nullable();
