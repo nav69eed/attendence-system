@@ -69,6 +69,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/tasks', [TaskController::class, 'store'])
         ->name('admin.tasks.store')
         ->middleware('role:admin');
+    Route::get('/admin/tasks/{task}', [TaskController::class, 'show'])
+        ->name('admin.tasks.show')
+        ->middleware('role:admin');
+    Route::get('/admin/tasks/{task}/edit', [TaskController::class, 'edit'])
+        ->name('admin.tasks.edit')
+        ->middleware('role:admin');
+    Route::delete('/admin/tasks/{task}', [TaskController::class, 'destroy'])
+        ->name('admin.tasks.destroy')
+        ->middleware('role:admin');
     Route::get('/admin/tasks/{task}/submissions', [TaskController::class, 'viewSubmissions'])
         ->name('admin.tasks.submissions')
         ->middleware('role:admin');

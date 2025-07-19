@@ -43,7 +43,7 @@
                                     @foreach ($gradeLevels as $level)
                                         <option value="{{ $level->id }}"
                                             {{ old('grade_level_id') == $level->id ? 'selected' : '' }}>
-                                            {{ $level->name }}
+                                            {{ $level->grade }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -54,7 +54,7 @@
 
                             <div class="mb-3">
                                 <label for="due_date" class="form-label">Due Date</label>
-                                <input type="datetime-local"
+                                <input type="date"
                                     class="form-control @error('due_date') is-invalid @enderror" id="due_date"
                                     name="due_date" value="{{ old('due_date') }}" required>
                                 @error('due_date')

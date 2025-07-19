@@ -4,19 +4,27 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Task extends Model
 {
-    protected $fillable = [
-        'assigned_by',
-        'assigned_to',
-        'grade_level_id',
-        'title',
-        'description',
-        'response',
-        'status',
-        'feedback'
+    protected $casts = [
+        'attachments' => 'array',
+        'due_date' => 'datetime',
     ];
+
+    protected $guarded = [];
+    // protected $fillable = [
+    //     'assigned_by',
+    //     'assigned_to',
+    //     'grade_level_id',
+    //     'title',
+    //     'description',
+    //     'response',
+    //     'status',
+    //     'feedback',
+    //     'attachments'
+    // ];
 
     /**
      * Get the user who assigned the task
@@ -42,4 +50,11 @@ class Task extends Model
         return $this->belongsTo(GradeLevel::class);
     }
 
+    /**
+     * Get the submissions for the task.
+     */
+    public function submissions(): HasMany
+    {
+        return $this->hasMany(Submission::class);
+    }
 }

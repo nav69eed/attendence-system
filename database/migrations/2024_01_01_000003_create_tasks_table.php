@@ -11,13 +11,15 @@ return new class extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('assigned_by')->constrained('users');
-            $table->foreignId('assigned_to')->constrained('users');
+            $table->foreignId('assigned_to')->nullable()->constrained('users');
             $table->foreignId('grade_level_id')->constrained('grade_levels');
             $table->string('title');
             $table->text('description');
+            $table->date('due_date')->nullable();
             $table->text('response')->nullable();
             $table->enum('status', ['pending', 'completed', 'approved', 'rejected'])->default('pending');
             $table->text('feedback')->nullable();
+            $table->json('attachments')->nullable();
             $table->timestamps();
         });
     }

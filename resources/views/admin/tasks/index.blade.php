@@ -74,22 +74,26 @@
                                 <td>{{ Str::limit($task->title, 50) }}</td>
                                 <td>{{ $task->gradeLevel->name }}</td>
                                 <td>
-                                    {{ $task->due_date->format('M d, Y h:i A') }}
-                                    @if ($task->due_date->isPast())
-                                        <br>
-                                        <small class="text-danger">Overdue</small>
-                                    @else
-                                        <br>
-                                        <small class="text-muted">{{ $task->due_date->diffForHumans() }}</small>
-                                    @endif
+                                    @if ($task->due_date)
+                                         {{ $task->due_date->format('M d, Y h:i A') }}
+                                         @if ($task->due_date && $task->due_date->isPast())
+                                              <br>
+                                              <small class="text-danger">Overdue</small>
+                                          @elseif ($task->due_date)
+                                              <br>
+                                              <small class="text-muted">{{ $task->due_date->diffForHumans() }}</small>
+                                          @endif
+                                     @else
+                                         N/A
+                                     @endif
                                 </td>
                                 <td>
                                     {{ $task->submissions_count }} / {{ $task->total_students }}
                                     <div class="progress" style="height: 5px;">
-                                        <div class="progress-bar" role="progressbar"
-                                            style="width: {{ ($task->submissions_count / $task->total_students) * 100 }}%">
-                                        </div>
-                                    </div>
+                                         <div class="progress-bar" role="progressbar"
+                                             style="width: {{ $task->total_students > 0 ? ($task->submissions_count / $task->total_students) * 100 : 0 }}%">
+                                         </div>
+                                     </div>
                                 </td>
                                 <td>
                                     @if ($task->due_date->isPast())

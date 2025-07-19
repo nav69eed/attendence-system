@@ -103,11 +103,21 @@ class TaskController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'grade_level_id' => ['required', 'exists:grade_levels,id'],
-            'due_date' => ['nullable', 'date', 'after:today'],
+            'due_date' => ['date', 'after:today'],
             'attachments' => ['nullable', 'array'],
             'attachments.*' => ['file', 'max:5120']
         ]);
 
+        $validated['assigned_by'] = Auth::id();
+        $validated['assigned_to'] = null; // Set assigned_to to null if not provided
+        // If no attachments are uploaded, ensure 'attachments' is an empty array for the JSON column
+        if (!$request->hasFile('attachments')) {
+            $validated['attachments'] = [];
+        }
+        // Ensure due_date is null if not provided in the request
+        if (!isset($validated['due_date'])) {
+            $validated['due_date'] = null;
+        }
         $task = new Task($validated);
 
         if ($request->hasFile('attachments')) {
